@@ -99,7 +99,7 @@ jobs:
           pip install --upgrade -e .
       - name: Run Pyinstaller
         run: |
-          "./scripts/win-pyinstaller.sh"
+          & "./scripts/win-pyinstaller.ps1"
         # upload win-binary
       - name: Upload win-binary
         uses: actions/upload-artifact@v2
