@@ -25,7 +25,9 @@
           "hexonet/ispapicli/ispapicli.py",
           "hexonet/ispapicli/modules/core.py",
           "VERSION",
-          "linux-binary-latest.zip"
+          "artifacts/linux-binary/linux-binary-latest.zip",
+          "artifacts/macos-binary-latest/macos-binary-latest.zip",
+          "artifacts/win-binary/win-binary-latest.zip"
         ]
       }
     ],
@@ -35,7 +37,15 @@
         "assets": [
           {
             "label": "Linux executable (zip)",
-            "path": "linux-binary-latest.zip"
+            "path": "artifacts/linux-binary/linux-binary-latest.zip"
+          },
+          {
+            "label": "MacOS executable (zip)",
+            "path": "artifacts/macos-binary-latest/macos-binary-latest.zip"
+          },
+          {
+            "label": "Win executable (zip)",
+            "path": "artifacts/win-binary/win-binary-latest.zip"
           }
         ]
       }

@@ -30,7 +30,7 @@ jobs:
           "./scripts/coverage.sh"
         # TODO add more lines here to be executed in the test stage e.g. pyinstaller etc.
   generate-linux-bin:
-    name: Generate linux bin
+    name: Generate Linux bin
     runs-on: ubuntu-latest
     needs: test
     steps:
@@ -139,6 +139,8 @@ jobs:
       # download our binary files
       - name: Download Artifacts
         uses: actions/download-artifact@v2
+        with:
+          path: artifacts
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
