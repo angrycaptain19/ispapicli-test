@@ -25,7 +25,7 @@
           "hexonet/ispapicli/ispapicli.py",
           "hexonet/ispapicli/modules/core.py",
           "VERSION",
-          "linux-binary.zip"
+          "linux-binary-latest.zip"
         ]
       }
     ],
@@ -35,7 +35,7 @@
         "assets": [
           {
             "label": "Linux executable (zip)",
-            "path": "linux-binary.zip"
+            "path": "linux-binary-latest.zip"
           }
         ]
       }
