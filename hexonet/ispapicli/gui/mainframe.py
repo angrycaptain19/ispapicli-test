@@ -120,8 +120,6 @@ class MainFrame(QWidget):
             else:
                 self.leftGroupBox.setDisabled(True)
                 self.topBox.setDisabled(True)
-        else:
-            pass
 
     def advanceProgressBar(self):
         curVal = self.progressBar.value()
@@ -267,12 +265,11 @@ class MainFrame(QWidget):
                     while i < params_len:
                         if '=' in parameters[i]:
                             key, value = parameters[i].split('=')
-                            params[key] = value
                         else:
                             key = parameters[i]
                             i += 1
                             value = parameters[i]
-                            params[key] = value
+                        params[key] = value
                         i += 1
                     self.commandText.setText()
             except Exception as e:
@@ -452,8 +449,6 @@ class MainFrame(QWidget):
 
     def menuBarActions(self, q):
         action = q.text()
-        if action == 'New Window':
-            pass
         if action == 'Save to file':
             self.saveCommandToFile()
         if action == 'Quit':
@@ -523,7 +518,7 @@ class MainFrame(QWidget):
         resultLists = listResult['LIST']
         counter = 0
         for row in resultLists:
-            for col in row:
+            for _ in row:
                 counter += 1
         # set the number of rows
         self.tableResponse.setRowCount(counter)
@@ -578,8 +573,7 @@ class MainFrame(QWidget):
     def commandAndResponsePlain(self):
         result = self.plainResponse.toPlainText()
         command = self.response.getCommandPlain()
-        textToWrite = command + '\n' + result
-        return textToWrite
+        return command + '\n' + result
 
     def copyToClipboard(self):
         try:
@@ -643,29 +637,30 @@ class MainFrame(QWidget):
     def eventFilter(self, source, event):
 
         # this function to handle autocomplete for command line
-        if (event.type() == QEvent.KeyRelease and source is self.cmdTxt):
-            if event.key() == Qt.Key_Space:
-                # show min paramters suggestions
-                try:
-                    cmd = self.cmdTxt.text()
-                    m = re.match('^(\w+)\s$', cmd)
-                    if m:
-                        minParams = self.coreLogic.getMinParameters(
-                            cmd.strip())
-                        if len(minParams) > 0:
-                            minParamsLabel = ', '.join(minParams)
-                            minParamsInput = '= '.join(minParams)
-                            cursorPosition = len(
-                                self.cmdTxt.text() +
-                                minParams[0]) + 1  # for the '=' char
-                            self.cmdTxt.setText(cmd + minParamsInput + '=')
-                            self.minParameter.setText('Min parameters: ' +
-                                                      minParamsLabel)
-                            self.cmdTxt.setCursorPosition(cursorPosition)
-                        else:
-                            self.minParameter.setText('Min parameters:')
-                except Exception as e:
-                    print(e)
+        if (
+            event.type() == QEvent.KeyRelease and source is self.cmdTxt
+        ) and event.key() == Qt.Key_Space:
+            # show min paramters suggestions
+            try:
+                cmd = self.cmdTxt.text()
+                m = re.match('^(\w+)\s$', cmd)
+                if m:
+                    minParams = self.coreLogic.getMinParameters(
+                        cmd.strip())
+                    if len(minParams) > 0:
+                        minParamsLabel = ', '.join(minParams)
+                        minParamsInput = '= '.join(minParams)
+                        cursorPosition = len(
+                            self.cmdTxt.text() +
+                            minParams[0]) + 1  # for the '=' char
+                        self.cmdTxt.setText(cmd + minParamsInput + '=')
+                        self.minParameter.setText('Min parameters: ' +
+                                                  minParamsLabel)
+                        self.cmdTxt.setCursorPosition(cursorPosition)
+                    else:
+                        self.minParameter.setText('Min parameters:')
+            except Exception as e:
+                print(e)
         # must return bool value
         return super(MainFrame, self).eventFilter(source, event)
 

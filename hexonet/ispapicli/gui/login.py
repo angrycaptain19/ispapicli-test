@@ -54,8 +54,7 @@ class LoginWindow(QDialog):
         myMovie.start()
 
         coreLogic = Core()
-        args = {}
-        args['userid'] = self.userIDTxt.text()
+        args = {'userid': self.userIDTxt.text()}
         args['password'] = self.passTxt.text()
         args['entity'] = self.sysChoice.currentText()
 

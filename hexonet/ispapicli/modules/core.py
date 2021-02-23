@@ -250,9 +250,8 @@ class Core:
         # check if there is a session already exist
         p = self.session_path
         try:
-            f = open(p, 'r')
-            data = json.load(f)
-            f.close()
+            with open(p, 'r') as f:
+                data = json.load(f)
             entity = data['entity']
             time_format = "%Y-%m-%d %H:%M:%S"
             t_now = datetime.now().strftime(time_format)
@@ -267,7 +266,7 @@ class Core:
                 return 'valid'
             else:
                 return 'expired'
-            # Do something with the session file
+                # Do something with the session file
         except IOError:
             return 'init'
 
@@ -282,34 +281,26 @@ class Core:
         p = self.session_path
         try:
             msg = ''
-            f = open(p, 'r')
-            data = json.load(f)
-            f.close()
+            with open(p, 'r') as f:
+                data = json.load(f)
             entity = data['entity']
             if entity == 'ote':
                 self.cl.useOTESystem()
             # delete remote session
             self.cl.setSession(str(data['session']))
             r = self.cl.logout()
-            if r.isSuccess():
-                flag = True
-            else:
-                flag = False
-
+            flag = bool(r.isSuccess())
             # delete local session
             path = self.session_path
             if os.path.exists(path):
                 os.remove(path)  # delete local session
                 if flag:
                     msg = 'Successfully logged out!'
-                    return msg
                 else:
                     msg = "Local session deleted but couldn't delete remote session!"
-                    return msg
             else:
                 msg = 'Session already deleted'
-                return msg
-
+            return msg
         except Exception as e:
             return "Couldn't delete remote session due to: " + str(e)
 
@@ -321,8 +312,7 @@ class Core:
         -------
         Response: response
         '''
-        response = self.cl.request(commands)
-        return response
+        return self.cl.request(commands)
 
     def getResponse(self, response, mode=''):
         '''
@@ -332,17 +322,14 @@ class Core:
         --------
         List | String
         '''
-        if mode == 'properties':
-            return response.getListHash()
-        elif mode == 'list':
+        if mode in ['properties', 'list']:
             return response.getListHash()
         elif mode == 'plain':
             return response.getPlain()
         else:
             code = response.getCode()
             description = response.getDescription()
-            message = "Server response: " + str(code) + " " + description
-            return message
+            return "Server response: " + str(code) + " " + description
 
     def getCommandHelp(self, command_name):
         '''
@@ -362,9 +349,8 @@ class Core:
                 file_name_lower_case = file_name.lower()
                 if file_name_lower_case == command_name:
                     file_path = os.path.join(path, file)
-                    f = open(file_path, 'r')
-                    data = json.load(f)
-                    f.close()
+                    with open(file_path, 'r') as f:
+                        data = json.load(f)
                     command = data['command']
                     description = data['description']
                     availability = data['availability']
@@ -408,15 +394,11 @@ class Core:
         try:
             time_format = "%Y-%m-%d %H:%M:%S"
             ts = datetime.now().strftime(time_format)
-            data = {}
-            data['session'] = loginSession
-            data['ts'] = ts
-            data['entity'] = entity
+            data = {'session': loginSession, 'ts': ts, 'entity': entity}
             # write session and current time to local file
             path = self.session_path
-            f = open(path, 'w')
-            json.dump(data, f)
-            f.close()
+            with open(path, 'w') as f:
+                json.dump(data, f)
             return True
         except Exception as e:
             return False
@@ -435,12 +417,11 @@ class Core:
         while i < (params_len):
             if '=' in parameters[i]:
                 key, value = parameters[i].split('=')
-                params[key] = value
             else:
                 key = parameters[i]
                 i += 1
                 value = parameters[i]
-                params[key] = value
+            params[key] = value
             i += 1
         # return result
         return params
@@ -483,9 +464,8 @@ class Core:
                 file_name_lower_case = file_name.lower()
                 if file_name_lower_case == command_name:
                     file_path = os.path.join(path, file)
-                    f = open(file_path, 'r')
-                    data = json.load(f)
-                    f.close()
+                    with open(file_path, 'r') as f:
+                        data = json.load(f)
                     paramaters = data['paramaters']
                     for row in paramaters:
                         paramater = row['Parameter']

@@ -67,25 +67,25 @@ class Scrap:
         List: urls
 
         '''
-        urls = []
         page = requests.get(url)
         # get page download status, 200 is success
         statusCode = page.status_code
-        if statusCode == 200:
-            # get the page content
-            src = page.content
-            # parse HTML content, create bs4 object
-            html = BeautifulSoup(src, 'html.parser')
-            # get table body
-            rows = html.find_all('a', attrs={'class': 'js-navigation-open link-gray-dark'})
-            for row in rows:
-                urlLink = 'https://github.com/' + row.get('href')
-                urls.append(urlLink)
-            # return urls
-            return urls
-        else:
+        if statusCode != 200:
             raise Exception("Page couldn't loaded. Status code: " +
                             str(statusCode))
+
+        # get the page content
+        src = page.content
+        # parse HTML content, create bs4 object
+        html = BeautifulSoup(src, 'html.parser')
+        # get table body
+        rows = html.find_all('a', attrs={'class': 'js-navigation-open link-gray-dark'})
+        urls = []
+        for row in rows:
+            urlLink = 'https://github.com/' + row.get('href')
+            urls.append(urlLink)
+        # return urls
+        return urls
 
     def __checkUrlType(self, url):
         '''
@@ -134,8 +134,7 @@ class Scrap:
         --------
         String: commandName
         '''
-        commandName = article.h1.text
-        return commandName
+        return article.h1.text
 
     # description of the command
     def __getCommandDescription(self, article):
@@ -183,7 +182,7 @@ class Scrap:
         rows = tableBody.find_all('tr')
         for row in rows:
             cols = row.find_all('td')
-            for i in range(0, len(cols)):
+            for i in range(len(cols)):
                 param[headers[i]] = cols[i].text
             # append params
             params.append(param)
@@ -226,9 +225,8 @@ class Scrap:
             if not os.path.exists(os.path.join(self.absolute_dirpath, '../commands/')):
                 os.makedirs(os.path.join(self.absolute_dirpath, '../commands/'))
             p = os.path.join(self.absolute_dirpath, '../commands/' + commandName + '.json')
-            f = open(p, "w")
-            json.dump(data, f)
-            f.close()
+            with open(p, "w") as f:
+                json.dump(data, f)
             print('Command file created: ', p)
             return True
         except Exception:
@@ -244,8 +242,7 @@ class Scrap:
         Dictionary: data
         '''
         try:
-            data = {}
-            data['command'] = self.__getCommandName(article)
+            data = {'command': self.__getCommandName(article)}
             data['description'] = self.__getCommandDescription(article)
             data['availability'] = self.__getCommandAvailability(article)
             data['paramaters'] = self.__getCommandParameters(table)
